@@ -1,22 +1,26 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
-# O'zingizda bor fayllardan import qilish:
+# Fayllarni to'g'ridan-to'g'ri import qilish (agar ular handlers papkasida bo'lmasa)
+import admin_menu
+import stats
+import channels
+import upload
+import add_episode
+import edit
+import broadcast
+import user
+
 from config import BOT_TOKEN  
 from database import init_db
-
-# Handler modullarini import qilish (agar ularni fayl sifatida alohida yozgan bo'lsangiz)
-from handlers import admin_menu, stats, channels, upload, add_episode, edit, broadcast, user
-
 import keyboards
 import states
 import utils
 
-# Loggingni sozlash
 logging.basicConfig(level=logging.INFO)
 
 async def main():
@@ -25,11 +29,10 @@ async def main():
 
     await init_db()
 
-    # Bot va Dispatcher yaratish (DefaultBotProperties yordamida HTML formatni yoqish)
     bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
     dp = Dispatcher(storage=MemoryStorage())
 
-    # Routerlarni ulash tartibi muhim
+    # Routerlarni ulash
     dp.include_router(admin_menu.router)
     dp.include_router(stats.router)
     dp.include_router(channels.router)
@@ -43,7 +46,6 @@ async def main():
     
     print("Bot muvaffaqiyatli ishga tushdi!")
     await dp.start_polling(bot)
-
 
 if __name__ == "__main__":
     asyncio.run(main())
